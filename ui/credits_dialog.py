@@ -192,7 +192,7 @@ class CreditsDialog:
                         text_align=ft.TextAlign.CENTER
                     ),
                     ft.Text(
-                        "Distribuido bajo licencia de código abierto",
+                        "Distribuido bajo la Licencia MIT",
                         size=9,
                         color=ft.Colors.GREY_500,
                         text_align=ft.TextAlign.CENTER,
