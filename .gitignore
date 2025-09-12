@@ -14,6 +14,7 @@ src/dist/
 build/
 develop-eggs/
 dist/
+release/
 downloads/
 eggs/
 .eggs/
@@ -164,3 +165,5 @@ cython_debug/
 
 # Flet
 storage/
+
+version_info.txt

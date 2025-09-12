@@ -10,6 +10,7 @@ from ui.interactive_preview import InteractivePreview
 from ui.export_options import ExportOptions
 from ui.progress_dialog import ProgressDialog, InlineProgressBar
 from ui.notification_system import NotificationSystem, CompletionDialog
+from ui.credits_dialog import CreditsDialog
 
 class AdvancedPDFExtractorApp:
     """Aplicación avanzada de extracción de PDF con funcionalidades interactivas"""
@@ -29,6 +30,7 @@ class AdvancedPDFExtractorApp:
         self.progress_dialog = ProgressDialog(page)
         self.loading_bar = InlineProgressBar(page)
         self.completion_dialog = CompletionDialog(page)
+        self.credits_dialog = CreditsDialog(page)
         
         # Estado
         self.current_pdf_path = ""
@@ -74,6 +76,13 @@ class AdvancedPDFExtractorApp:
             on_click=self._clear_all
         )
         
+        self.credits_button = ft.IconButton(
+            icon=ft.Icons.INFO_OUTLINE,
+            tooltip="Acerca de",
+            on_click=self._show_credits,
+            icon_size=20
+        )
+        
         # Información de estado
         self.status_text = ft.Text(
             "",
@@ -116,13 +125,21 @@ class AdvancedPDFExtractorApp:
         # Header con controles principales
         header = ft.Container(
             content=ft.Column([
-                # Título
-                ft.Text(
-                    "PDF Extractor Advanced",
-                    size=24,
-                    weight=ft.FontWeight.BOLD,
-                    text_align=ft.TextAlign.CENTER
-                ),
+                # Título con botón de créditos
+                ft.Row([
+                    ft.Container(expand=1),  # Espaciador izquierdo
+                    ft.Text(
+                        "PDF Extractor Advanced",
+                        size=24,
+                        weight=ft.FontWeight.BOLD,
+                        text_align=ft.TextAlign.CENTER
+                    ),
+                    ft.Container(
+                        content=self.credits_button,
+                        expand=1,
+                        alignment=ft.alignment.center_right
+                    )  # Botón de créditos a la derecha
+                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                 ft.Divider(),
                 
                 # Controles de archivo
@@ -419,6 +436,10 @@ class AdvancedPDFExtractorApp:
         """Limpiar todo"""
         self._reset_state()
         self.msg.show("Aplicación reiniciada", ft.Colors.BLUE)
+    
+    def _show_credits(self, e):
+        """Mostrar diálogo de créditos"""
+        self.credits_dialog.show_credits()
     
     def _reset_state(self):
         """Resetear estado de la aplicación"""

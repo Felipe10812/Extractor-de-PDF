@@ -67,9 +67,15 @@ class NotificationSystem:
             $notifier.Show($toast)
             '''
             
+            # CRÍTICO: Usar CREATE_NO_WINDOW para evitar que la ventana de PowerShell aparezca
+            creation_flags = 0
+            if os.name == 'nt':
+                creation_flags = subprocess.CREATE_NO_WINDOW
+
             subprocess.run([
                 "powershell", "-Command", ps_script
-            ], capture_output=True, text=True, timeout=5)
+            ], capture_output=True, text=True, timeout=5,
+            creationflags=creation_flags)
             
         except Exception as e:
             print(f"Error en notificación Windows nativa: {e}")
@@ -216,14 +222,20 @@ class CompletionDialog:
         try:
             import subprocess
             import platform
+            import os
             
+            # CRÍTICO: Usar CREATE_NO_WINDOW para evitar que la ventana de consola aparezca
+            creation_flags = 0
+            if os.name == 'nt':
+                creation_flags = subprocess.CREATE_NO_WINDOW
+
             system = platform.system()
             if system == "Windows":
-                subprocess.run(f'explorer "{self.open_path}"', shell=True)
+                subprocess.run(['explorer', self.open_path], creationflags=creation_flags)
             elif system == "Darwin":  # macOS
-                subprocess.run(["open", self.open_path])
+                subprocess.run(["open", self.open_path], creationflags=creation_flags)
             elif system == "Linux":
-                subprocess.run(["xdg-open", self.open_path])
+                subprocess.run(["xdg-open", self.open_path], creationflags=creation_flags)
         except Exception as ex:
             print(f"Error abriendo carpeta: {ex}")
         
