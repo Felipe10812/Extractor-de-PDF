@@ -212,6 +212,10 @@ class AdvancedPDFExtractorApp:
             # Mostrar solo el nombre del archivo
             file_name = Path(file_path).name
             self.file_name_text.value = file_name
+
+            # CRÍTICO: Pasar el nombre base al módulo de exportación para sugerencias
+            base_name = Path(file_path).stem
+            self.export_options.set_base_filename(base_name)
             
             # Limpiar estado previo
             self.page_manager.clear()

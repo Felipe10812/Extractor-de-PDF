@@ -1,6 +1,7 @@
 import flet as ft
 from typing import Callable, Optional
 from pathlib import Path
+from datetime import datetime
 
 class ExportOptions:
     """Componente para opciones de exportación"""
@@ -8,6 +9,7 @@ class ExportOptions:
     def __init__(self, page: ft.Page, on_export: Optional[Callable] = None):
         self.page = page
         self.on_export = on_export
+        self.base_filename = "archivo" # Nombre por defecto
         
         # Controles para opciones de exportación
         self.export_format = ft.Dropdown(
@@ -114,19 +116,22 @@ class ExportOptions:
     def _on_browse(self, e):
         """Manejar clic en botón de navegación"""
         format_key = self.export_format.value
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         if format_key == "pdf_combined":
             # Para PDF único, mostrar diálogo de guardar archivo
+            suggested_name = f"{self.base_filename}_{timestamp}.pdf"
             self.folder_picker.save_file(
                 dialog_title="Guardar PDF como...",
-                file_name="extracted_pages.pdf",
+                file_name=suggested_name,
                 allowed_extensions=["pdf"]
             )
         elif format_key in ["images_zip"]:
             # Para ZIP de imágenes, mostrar diálogo de guardar archivo
+            suggested_name = f"{self.base_filename}_imagenes_{timestamp}.zip"
             self.folder_picker.save_file(
                 dialog_title="Guardar como...",
-                file_name="extracted_pages.zip",
+                file_name=suggested_name,
                 allowed_extensions=["zip"]
             )
         else:
@@ -152,9 +157,25 @@ class ExportOptions:
         if not self.on_export:
             return
         
+        # Validar y corregir la extensión del archivo de salida
+        output_path = self.output_path.value
+        format_key = self.export_format.value
+        
+        if format_key == "pdf_combined":
+            if not output_path.lower().endswith(".pdf"):
+                output_path += ".pdf"
+        elif format_key == "images_zip":
+            if not output_path.lower().endswith(".zip"):
+                output_path += ".zip"
+        
+        # Actualizar el campo de texto con la ruta corregida
+        self.output_path.value = output_path
+        self.page.update()
+        
+        # Crear la configuración de exportación
         export_config = {
-            'format': self.export_format.value,
-            'output_path': self.output_path.value,
+            'format': format_key,
+            'output_path': output_path,
             'image_format': self.image_format.value if self.image_format.visible else 'PNG'
         }
         
@@ -165,17 +186,10 @@ class ExportOptions:
         self.export_button.disabled = not enable or not self.output_path.value
         self.page.update()
     
-    def get_filename_suggestion(self, base_name: str) -> str:
-        """Obtener sugerencia de nombre de archivo"""
-        format_key = self.export_format.value
-        
-        if format_key == "pdf_combined":
-            return f"{base_name}_extracted.pdf"
-        elif format_key == "images_zip":
-            return f"{base_name}_images.zip"
-        else:
-            return f"{base_name}_extracted"
-    
+    def set_base_filename(self, name: str):
+        """Establecer el nombre base del archivo PDF cargado."""
+        self.base_filename = name
+
     def reset(self):
         """Resetear controles"""
         self.output_path.value = ""
