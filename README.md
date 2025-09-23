@@ -1,21 +1,42 @@
-# PDF Extractor Advanced
+# PDF & Image Converter Advanced
 
-Una herramienta de escritorio moderna y multiplataforma para extraer, previsualizar y manipular páginas de archivos PDF con facilidad.
+Una herramienta de escritorio moderna y multiplataforma para extraer páginas de PDFs y convertir imágenes a PDF con funcionalidades avanzadas de previsualización y manipulación.
 
-Esta aplicación permite a los usuarios cargar un documento PDF, seleccionar páginas específicas (o rangos), previsualizarlas interactivamente, rotarlas o eliminarlas, y finalmente exportarlas en múltiples formatos como un PDF combinado, PDFs individuales o imágenes de alta calidad.
+Esta aplicación versátil permite a los usuarios:
+- **Modo PDF**: Cargar un documento PDF, seleccionar páginas específicas, previsualizarlas y exportarlas en múltiples formatos
+- **Modo Imágenes**: Cargar múltiples imágenes, organizarlas y convertirlas en un PDF profesional con opciones de configuración avanzadas
 
 ## ✨ Características Principales
 
--   **Previsualización Interactiva**: Visualiza las páginas seleccionadas como miniaturas antes de exportar.
--   **Manipulación de Páginas**: Rota y elimina páginas individualmente con un solo clic.
--   **Múltiples Formatos de Exportación**:
-    -   PDF único (combinado)
-    -   PDFs individuales
-    -   Imágenes en un archivo ZIP (PNG, JPEG, TIFF)
-    -   Imágenes en una carpeta
--   **Alta Calidad**: Las imágenes se exportan a 300 DPI, ideal para impresión y uso profesional.
--   **Interfaz Moderna**: Tema oscuro, diseño intuitivo y notificaciones del sistema para una mejor experiencia de usuario.
--   **Procesamiento Eficiente**: Las operaciones se ejecutan en segundo plano para no bloquear la aplicación.
+### 🔄 Funcionalidades Duales
+-   **Modo Extracción PDF**: Extrae páginas específicas de documentos PDF existentes
+-   **Modo Conversión de Imágenes**: Convierte múltiples imágenes en un PDF profesional
+-   **Selector de Modo Intuitivo**: Cambia fácilmente entre los dos modos de operación
+
+### 🖼️ Conversión de Imágenes a PDF
+-   **Formatos Soportados**: PNG, JPEG, BMP, TIFF, WebP
+-   **Configuración Avanzada**:
+    -   Tamaños de página: A4, Letter, Legal, A3, A5
+    -   Orientaciones: Vertical y horizontal
+    -   Modos de ajuste: Ajustar (mantener proporción), Llenar página, Estirar
+-   **Procesamiento Inteligente**: Manejo automático de transparencias y diferentes formatos de color
+
+### 📄 Extracción y Manipulación de PDF
+-   **Previsualización Interactiva**: Visualiza las páginas seleccionadas como miniaturas antes de exportar
+-   **Manipulación de Páginas**: Rota y elimina páginas individualmente con un solo clic
+-   **Selección Flexible**: Especifica páginas individuales, rangos o combinaciones (ej: 1,3,5-7)
+
+### 📤 Múltiples Formatos de Exportación
+-   PDF único (combinado)
+-   PDFs individuales
+-   Imágenes en archivo ZIP (PNG, JPEG, TIFF)
+-   Imágenes en carpeta
+
+### 🎨 Experiencia de Usuario Premium
+-   **Alta Calidad**: Las imágenes se exportan a 300 DPI, ideal para impresión y uso profesional
+-   **Interfaz Moderna**: Tema oscuro, diseño intuitivo y notificaciones del sistema
+-   **Procesamiento Eficiente**: Las operaciones se ejecutan en segundo plano con indicadores de progreso detallados
+-   **Notificaciones del Sistema**: Alertas nativas de Windows para informar sobre el progreso y completación
 
 ## 🙏 Créditos y Reconocimientos
 
@@ -30,7 +51,7 @@ Esta aplicación es una versión mejorada y extendida basada en el excelente tra
 
 ### Versión Avanzada
 
-El desarrollo de la versión "Advanced", incluyendo la previsualización interactiva, las opciones de exportación mejoradas, el sistema de notificaciones y la refactorización general, fue realizado por **Felipe Acosta Coronado**.
+El desarrollo de la versión "Advanced", incluyendo la previsualización interactiva, las opciones de exportación mejoradas, el sistema de notificaciones, la funcionalidad de conversión de imágenes a PDF, y la refactorización general, fue realizado por **Felipe Acosta Coronado**.
 
 -   **Felipe Acosta Coronado** - Desarrollador de la versión avanzada.
     -   **GitHub**: [github.com/Felipe10812](https://github.com/Felipe10812)
