@@ -109,7 +109,7 @@ class NotificationSystem:
             
             # Mostrar notificación
             NotificationSystem.show_notification(
-                title=f"✅ {operation} Completada",
+                title=f"{operation} Completada",
                 message=message,
                 icon="success"
             )
@@ -118,7 +118,7 @@ class NotificationSystem:
             print(f"Error en notificación de completación: {e}")
             # Fallback básico
             NotificationSystem.show_notification(
-                title=f"✅ {operation} Completada",
+                title=f"{operation} Completada",
                 message="Los archivos se han guardado exitosamente",
                 icon="success"
             )
@@ -133,7 +133,7 @@ class NotificationSystem:
             error_message: Mensaje de error
         """
         NotificationSystem.show_notification(
-            title=f"❌ Error en {operation}",
+            title=f"Error en {operation}",
             message=error_message,
             icon="error"
         )
@@ -152,7 +152,7 @@ class NotificationSystem:
             message += f"\n{details}"
             
         NotificationSystem.show_notification(
-            title=f"🚀 {operation} Iniciada",
+            title=f"{operation} Iniciada",
             message=message,
             icon="info"
         )

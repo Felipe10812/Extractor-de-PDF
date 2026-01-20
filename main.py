@@ -2,7 +2,7 @@ import flet as ft
 from app import AdvancedPDFExtractorApp
 
 def main(page: ft.Page):
-    page.title = "PDF Extractor Advanced"
+    page.title = "PDF Extractor"
     page.window_width = 1200
     page.window_height = 800
     page.window_resizable = True
