@@ -1,4 +1,4 @@
-# PDF & Image Converter Advanced
+# PDF & Image Converterd
 
 Una herramienta de escritorio moderna y multiplataforma para extraer páginas de PDFs y convertir imágenes a PDF con funcionalidades avanzadas de previsualización y manipulación.
 

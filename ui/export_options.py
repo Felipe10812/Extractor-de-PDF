@@ -10,7 +10,7 @@ class ExportOptions:
         self.page = page
         self.on_export = on_export
         self.base_filename = "archivo" # Nombre por defecto
-        self.current_mode = "pdf"  # "pdf" o "images"
+        self.current_mode = "pdf"  # "pdf", "merge_pdfs" o "images"
         
         # Controles para opciones de exportación
         self.export_format = ft.Dropdown(
@@ -155,6 +155,8 @@ class ExportOptions:
             self.output_path.label = "Archivo de salida"
             if self.current_mode == "images":
                 self.output_path.hint_text = "Selecciona dónde guardar el PDF convertido"
+            elif self.current_mode == "merge_pdfs":
+                self.output_path.hint_text = "Selecciona dónde guardar el PDF unificado"
             else:
                 self.output_path.hint_text = "Selecciona dónde guardar el PDF"
         elif format_key == "pdf_individual_zip":
@@ -278,6 +280,14 @@ class ExportOptions:
                 ft.dropdown.Option(key="pdf_individual_folder", text="PDFs individuales en carpeta")
             ]
             self.export_format.value = "pdf_combined"
+        elif self.current_mode == "merge_pdfs":
+            # En modo unir PDFs, solo PDF único y exportar como imágenes
+            self.export_format.options = [
+                ft.dropdown.Option(key="pdf_combined", text="PDF único unificado"),
+                ft.dropdown.Option(key="images_zip", text="Imágenes (ZIP)"),
+                ft.dropdown.Option(key="images_folder", text="Imágenes (Carpeta)")
+            ]
+            self.export_format.value = "pdf_combined"
         else:
             # En modo PDF, las opciones son extracción
             self.export_format.options = [
@@ -296,7 +306,7 @@ class ExportOptions:
             self.pdf_orientation.visible = True
             self.pdf_fit_mode.visible = True
         else:
-            # En modo PDF, ocultar controles PDF
+            # En modo PDF o merge_pdfs, ocultar controles PDF
             self.image_format.visible = False
             self.pdf_page_size.visible = False
             self.pdf_orientation.visible = False
@@ -329,6 +339,8 @@ class ExportOptions:
         if format_key == "pdf_combined":
             if self.current_mode == "images":
                 self.output_path.hint_text = "Selecciona dónde guardar el PDF convertido"
+            elif self.current_mode == "merge_pdfs":
+                self.output_path.hint_text = "Selecciona dónde guardar el PDF unificado"
             else:
                 self.output_path.hint_text = "Selecciona dónde guardar el PDF"
         elif format_key == "pdf_individual_zip":

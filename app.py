@@ -5,6 +5,7 @@ from typing import List
 import flet as ft
 from services.page_parser import PageParser
 from services.pdf_service import PDFService
+from services.pdf_merger_service import PDFMergerService
 from services.image_service import ImageService
 from services.page_manager import PageManager
 from ui.message_handler import MessageHandler
@@ -20,12 +21,12 @@ class AdvancedPDFExtractorApp:
     
     def __init__(self, page: ft.Page):
         self.page = page
-        self.page.title = "PDF & Image Converter Advanced"
+        self.page.title = "PDF & Image Converter"
         
         # Servicios y managers
-        self.service = None  # Puede ser PDFService o ImageService
+        self.service = None  # Puede ser PDFService, PDFMergerService o ImageService
         self.page_manager = PageManager()
-        self.current_mode = "pdf"  # "pdf" o "images"
+        self.current_mode = "pdf"  # "pdf", "merge_pdfs" o "images"
         
         # Componentes UI
         self.msg = MessageHandler(page)
@@ -61,6 +62,11 @@ class AdvancedPDFExtractorApp:
                     value="pdf",
                     label=ft.Text("Extraer de PDF"),
                     icon=ft.Icon(ft.Icons.PICTURE_AS_PDF)
+                ),
+                ft.Segment(
+                    value="merge_pdfs",
+                    label=ft.Text("Unir PDFs"),
+                    icon=ft.Icon(ft.Icons.MERGE_TYPE)
                 ),
                 ft.Segment(
                     value="images", 
@@ -160,7 +166,7 @@ class AdvancedPDFExtractorApp:
                 ft.Row([
                     ft.Container(expand=1),  # Espaciador izquierdo
                     ft.Text(
-                        "PDF & Image Converter Advanced",
+                        "PDF & Image Converter",
                         size=24,
                         weight=ft.FontWeight.BOLD,
                         text_align=ft.TextAlign.CENTER
@@ -245,6 +251,13 @@ class AdvancedPDFExtractorApp:
             self.load_button.icon = ft.Icons.UPLOAD_FILE
             self.pages_input.label = "Páginas (ej: 1,3,5-7)"
             self.pages_input.hint_text = "Deja vacío para todas las páginas"
+        elif self.current_mode == "merge_pdfs":
+            self.file_name_text.label = "Archivos PDF"
+            self.file_name_text.hint_text = "Selecciona múltiples archivos PDF..."
+            self.load_button.text = "Cargar PDFs"
+            self.load_button.icon = ft.Icons.UPLOAD_FILE
+            self.pages_input.label = "Páginas (ej: 1,3,5-7)"
+            self.pages_input.hint_text = "Deja vacío para todas las páginas"
         else:  # images
             self.file_name_text.label = "Imágenes seleccionadas"
             self.file_name_text.hint_text = "Selecciona múltiples imágenes..."
@@ -272,6 +285,12 @@ class AdvancedPDFExtractorApp:
                 allowed_extensions=["pdf"],
                 allow_multiple=False
             )
+        elif self.current_mode == "merge_pdfs":
+            self.file_picker.pick_files(
+                dialog_title="Seleccionar archivos PDF para unir",
+                allowed_extensions=["pdf"],
+                allow_multiple=True
+            )
         else:  # images
             self.file_picker.pick_files(
                 dialog_title="Seleccionar imágenes",
@@ -287,6 +306,9 @@ class AdvancedPDFExtractorApp:
         if self.current_mode == "pdf":
             file_path = e.files[0].path
             self._load_pdf_file(file_path)
+        elif self.current_mode == "merge_pdfs":
+            file_paths = [f.path for f in e.files]
+            self._load_merge_pdf_files(file_paths)
         else:  # images
             file_paths = [f.path for f in e.files]
             self._load_image_files(file_paths)
@@ -327,6 +349,52 @@ class AdvancedPDFExtractorApp:
         except Exception as ex:
             self.loading_bar.hide()
             self.msg.show(f"Error cargando PDF: {ex}", ft.Colors.RED, ft.Icons.ERROR)
+            self._reset_state()
+    
+    def _load_merge_pdf_files(self, file_paths: List[str]):
+        """Cargar múltiples archivos PDF para unir"""
+        try:
+            self.loading_bar.show("Cargando PDFs...")
+            
+            # Crear servicio de merger de PDFs
+            self.service = PDFMergerService(file_paths)
+            self.current_file_paths = file_paths
+            
+            # Mostrar información de PDFs cargados
+            total_pdfs = self.service.get_pdf_count()
+            total_pages = self.service.get_total_pages()
+            
+            if total_pdfs == 1:
+                self.file_name_text.value = Path(file_paths[0]).name
+            else:
+                self.file_name_text.value = f"{total_pdfs} archivos PDF seleccionados"
+            
+            # Usar nombre descriptivo para la base
+            base_name = f"merged_{total_pdfs}_pdfs"
+            if file_paths:
+                first_name = Path(file_paths[0]).stem
+                base_name = f"{first_name}_y_{total_pdfs-1}_mas" if total_pdfs > 1 else first_name
+            
+            self.export_options.set_base_filename(base_name)
+            
+            # Limpiar estado previo
+            self.page_manager.clear()
+            self.preview.clear()
+            self.export_options.reset()
+            
+            # Actualizar estado
+            self.status_text.value = f"{total_pdfs} PDFs cargados: {total_pages} páginas totales"
+            self.preview_button.disabled = False
+            
+            # Ocultar barra de carga
+            self.loading_bar.hide()
+            
+            self.msg.show(f"PDFs cargados exitosamente ({total_pdfs} archivos, {total_pages} páginas)", ft.Colors.GREEN)
+            self.page.update()
+            
+        except Exception as ex:
+            self.loading_bar.hide()
+            self.msg.show(f"Error cargando PDFs: {ex}", ft.Colors.RED, ft.Icons.ERROR)
             self._reset_state()
     
     def _load_image_files(self, file_paths: List[str]):
@@ -415,13 +483,24 @@ class AdvancedPDFExtractorApp:
                 try:
                     total = len(pages)
                     for i, page_num in enumerate(pages):
-                        item_type = "página" if self.current_mode == "pdf" else "imagen"
+                        item_type = "página" if self.current_mode in ["pdf", "merge_pdfs"] else "imagen"
                         self.loading_bar.update_progress(i, total, f"Renderizando {item_type} {page_num}")
                         
                         if page_num <= self.service.get_total_pages():
                             img = self.service.render_page(page_num)
                             if img:
-                                self.page_manager.add_page(page_num, img)
+                                # Para modo merge_pdfs, agregar metadata de origen
+                                if self.current_mode == "merge_pdfs" and isinstance(self.service, PDFMergerService):
+                                    pdf_info, local_page = self.service._find_pdf_for_page(page_num)
+                                    if pdf_info:
+                                        self.page_manager.add_page(
+                                            page_num, img, 
+                                            source_pdf=pdf_info.name,
+                                            source_pdf_index=pdf_info.index,
+                                            original_page_number=local_page
+                                        )
+                                else:
+                                    self.page_manager.add_page(page_num, img)
                     
                     # Actualizar preview en hilo principal
                     def update_ui():
@@ -463,7 +542,7 @@ class AdvancedPDFExtractorApp:
     def _on_export(self, export_config: dict):
         """Manejar exportación"""
         if not self.service or self.page_manager.get_selected_pages_count() == 0:
-            item_type = "páginas" if self.current_mode == "pdf" else "imágenes"
+            item_type = "páginas" if self.current_mode in ["pdf", "merge_pdfs"] else "imágenes"
             self.msg.show(f"No hay {item_type} para exportar", ft.Colors.RED)
             return
         
@@ -509,7 +588,12 @@ class AdvancedPDFExtractorApp:
                 success = False
                 
                 if export_format == "pdf_combined":
-                    if self.current_mode == "images":
+                    if self.current_mode == "merge_pdfs":
+                        # Unión de múltiples PDFs
+                        success = self.service.export_combined_pdf(
+                            self.page_manager, output_path, progress_callback
+                        )
+                    elif self.current_mode == "images":
                         # Conversión de imágenes a PDF usando configuraciones de ajuste
                         settings = self.image_adjustment.get_settings()
                         success = self.service.convert_to_pdf(

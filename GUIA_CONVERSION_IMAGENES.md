@@ -1,6 +1,6 @@
 # Guía de Conversión de Imágenes a PDF
 
-Esta guía detalla cómo usar la nueva funcionalidad de conversión de imágenes a PDF en **PDF & Image Converter Advanced**.
+Esta guía detalla cómo usar la nueva funcionalidad de conversión de imágenes a PDF en **PDF & Image Converter**.
 
 ## 🚀 Introducción
 
